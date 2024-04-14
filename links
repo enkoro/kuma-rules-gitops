@@ -14,3 +14,40 @@ https://attilaolah.eu/2014/09/10/json-and-struct-composition-in-go/
 https://gobyexample.com/
 https://go.dev/doc/effective_go
 https://blog.boot.dev/golang/empty-vs-nil-slices-golang/
+
+
+
+package main
+
+import (
+	"encoding/json"
+	"os"
+)
+
+type BlogPost struct {
+	URL   string `json:"url"`
+	Title string `json:"title"`
+}
+
+type Analytics struct {
+	Visitors int `json:"visitors"`
+}
+
+type Qwe struct {
+	*BlogPost
+	*Analytics
+	PageViews int `json:"page_views"`
+}
+
+func main() {
+	qwe := Qwe{}
+
+	json.Unmarshal([]byte(`{
+	  "url": "attila@attilaolah.eu",
+	  "title": "Attila's Blog",
+	  "visitors": 6,
+	  "page_views": 14
+	}`), &qwe)
+
+	json.NewEncoder(os.Stdout).Encode(qwe)
+}
