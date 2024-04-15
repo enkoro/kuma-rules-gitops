@@ -1,25 +1,32 @@
 package main
 
 import (
-	"kuma-rules-gitops/rules"
+	"fmt"
+	kuma "kuma-rules-gitops/resources"
 	"os"
 )
 
 func main() {
-
-	var testRule rules.Enrichment
-	testInput, err := os.ReadFile("test_input.yaml")
+	enrichment := kuma.NewRuleEnrichment()
+	chtototam := kuma.NewRuleChtototam()
+	inputYaml, err := os.ReadFile("test_input.yaml")
 	if err != nil {
 		panic(err)
 	}
-	err = testRule.FromYaml(testInput)
+	if err = enrichment.FromYaml(inputYaml); err != nil {
+		panic(err)
+	}
+	if err = chtototam.FromYaml(inputYaml); err != nil {
+		panic(err)
+	}
+	encodedChtototam, err := chtototam.Encode("")
 	if err != nil {
 		panic(err)
 	}
-	file, err := os.OpenFile("out", os.O_CREATE, 0644)
+	encodedEnrichment, err := enrichment.Encode("")
 	if err != nil {
 		panic(err)
 	}
-	testRule.WriteTo(file, "qwe")
-	testRule.WriteTo(os.Stdout, "")
+	fmt.Println(string(encodedChtototam))
+	fmt.Println(string(encodedEnrichment))
 }
